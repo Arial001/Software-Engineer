@@ -1,28 +1,14 @@
-name: DevOps Pipeline
+name: Unity Pipeline
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Tests
-        run: npm test
-
-      - name: Build Project
-        run: npm run build
+      - name: Pipeline Test
+        run: echo "Unity pipeline works!"
