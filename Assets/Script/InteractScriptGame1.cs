@@ -27,7 +27,7 @@ public class InteractScriptGame1 : MonoBehaviour
 
     private void Update()
     {
-        if (selectionManager == null || raycastVisualizer == null || game1 == null)
+        if (selectionManager == null || raycastVisualizer == null )
         {
             Debug.LogWarning("Satu atau lebih referensi belum diatur!");
             return;
@@ -46,7 +46,7 @@ public class InteractScriptGame1 : MonoBehaviour
                 if (interactable != null && selectionManager.IsInteractable(interactable))
                 {
                     BackgroundMusic.PlayMusic();
-                    if (game1.transform.name == A)
+                    /*if (game1.transform.name == A)
                     {
                         Game1Manager.ResetScript();
                         //ForceObjectSwitcher.SwitchObjectPositions();
@@ -57,7 +57,7 @@ public class InteractScriptGame1 : MonoBehaviour
                         LoginGame2.LoginKeGame2();
                         //ForceObjectSwitcher.SwitchObjectPositions();
                         return;
-                    }
+                    }*/
                     if (game3.transform.name == A)
                     {
                         LoginGame3.LoginKeGame2();

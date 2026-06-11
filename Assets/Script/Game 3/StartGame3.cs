@@ -30,6 +30,8 @@ public class StartGame3 : MonoBehaviour
     public ObjectPlayG3 ObjectPlayG3;
     [Header("Referensi Scripts ObjectPlayG3")]
     public List<SelectionManager> SelectionManager = new List<SelectionManager>();
+
+    public SelectionManagerG3 SelectionManagerG3;
     private int a;
     private int b;
     private int c;
@@ -282,10 +284,11 @@ public class StartGame3 : MonoBehaviour
         welcomeText.fontSize = 190;
         yield return new WaitForSeconds(3.0f);
         GeneratorGame3.GenerateWords();
+        yield return new WaitForSeconds(1.1f);
         GeneratorGame3.PopulateAvailableRendererNames();
         yield return new WaitForSeconds(1.1f);
         GeneratorGame3.UpdateWordPlacementData();
-        
+        yield return new WaitForSeconds(1.1f);
         welcomeText.text = string.Empty;
         welcomeText.gameObject.SetActive(true);
         welcomeText.text = QuestionIndexEliminationG3.selectedQuestion; // Ambil dari script lain
@@ -296,7 +299,7 @@ public class StartGame3 : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         TimerGameResultG3.enabled = true;
         TimerGameResultG3.totalTime = 300;
-        yield return new WaitForSeconds(121.0f);
+        yield return new WaitForSeconds(300.0f);
         DeactivateAllInteractStartG3();
         EnableIsTriggerForRotationObjects();
         yield return new WaitForSeconds(0.5f);
@@ -314,12 +317,20 @@ public class StartGame3 : MonoBehaviour
                        $"player 4 mendapat poin = {d} poin\n";
         welcomeText.alignment = TextAnchor.UpperLeft;
         welcomeText.fontSize = 180;
+        Datagame3.DestroyAllGridBlocks();
         yield return new WaitForSeconds(10.1f);
         GeneratorGame3.clear();
+        SelectionManagerG3.CleanUpMissingObjects();
         welcomeText.text = string.Empty;
         yield return new WaitForSeconds(0.1f);
+        Datagame3.RestoreMissingBlocks();
+        yield return new WaitForSeconds(1.1f);
         SetWelcomeMessage();
-        
+        Datagame3.InitializeGrid();
+        yield return new WaitForSeconds(2.1f);
+        SelectionManagerG3.AddChildInteractableObjects();
+
+
     }
     private IEnumerator Force()
     {
@@ -363,7 +374,7 @@ public class StartGame3 : MonoBehaviour
     void Update()
     {
         e = GeneratorGame3.A;
-        Debug.Log("E = 1");
+        //Debug.Log("E = 1");
         if (e == 1)
         {
             Debug.Log("E = 4");

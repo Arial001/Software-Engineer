@@ -27,7 +27,7 @@ public class SelectionManagerG3 : MonoBehaviour
             return;
         }
 
-        FindAllInteractableObjectsInScene();
+        CleanUpMissingObjects();
     }
 
     void Update()
@@ -55,6 +55,35 @@ public class SelectionManagerG3 : MonoBehaviour
         }
     }
 
+    public void AddChildInteractableObjects()
+    {
+        List<InteractableObject> newInteractables = new List<InteractableObject>();
+
+        foreach (InteractableObject interactable in interactableObjects)
+        {
+            // Tambahkan anak-anak dan cucu-cucu yang memiliki InteractableObject ke dalam daftar sementara
+            AddChildInteractables(interactable.transform, newInteractables);
+        }
+
+        // Setelah iterasi selesai, tambahkan semua anak baru ke dalam daftar utama
+        interactableObjects.AddRange(newInteractables);
+    }
+
+    private void AddChildInteractables(Transform parent, List<InteractableObject> newInteractables)
+    {
+        foreach (Transform child in parent)
+        {
+            InteractableObject childInteractable = child.GetComponent<InteractableObject>();
+            if (childInteractable != null && !newInteractables.Contains(childInteractable))
+            {
+                newInteractables.Add(childInteractable);
+            }
+
+            // Panggil fungsi ini secara rekursif untuk mencari anak-anak dari child saat ini
+            AddChildInteractables(child, newInteractables);
+        }
+    }
+
     private void FindAllInteractableObjectsInScene()
     {
         interactableObjects.Clear();
@@ -65,5 +94,12 @@ public class SelectionManagerG3 : MonoBehaviour
     public bool IsInteractable(InteractableObject obj)
     {
         return interactableObjects.Contains(obj);
+    }
+    public void CleanUpMissingObjects()
+    {
+        // Perintah ini akan mengecek list dan membuang semua elemen yang isinya 'null'
+        interactableObjects.RemoveAll(item => item == null);
+
+        Debug.Log("List telah dibersihkan dari objek yang Missing!");
     }
 }

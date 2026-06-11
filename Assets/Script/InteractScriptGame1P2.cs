@@ -32,7 +32,7 @@ public class InteractScriptGame1P2 : MonoBehaviour
         {
             joystick = Gamepad.all[joystickIndex];
         }
-        if (selectionManager == null || raycastVisualizer == null || game1 == null)
+        if (selectionManager == null || raycastVisualizer == null)
         {
             Debug.LogWarning("Satu atau lebih referensi belum diatur!");
             return;
@@ -52,18 +52,18 @@ public class InteractScriptGame1P2 : MonoBehaviour
                 if (interactable != null && selectionManager.IsInteractable(interactable))
                 {
                     BackgroundMusic.PlayMusic();
-                    if (game1.transform.name == A)
+                    /*if (game1.transform.name == A)
                     {
                         Game1Manager.ResetScript();
                         //ForceObjectSwitcher.SwitchObjectPositions();
                         return;
                     }
-                    if (game2.transform.name == A)
+                    /*if (game2.transform.name == A)
                     {
                         LoginGame2.LoginKeGame2();
                         //ForceObjectSwitcher.SwitchObjectPositions();
                         return;
-                    }
+                    }*/
                     if (game3.transform.name == A)
                     {
                         LoginGame3.LoginKeGame2();

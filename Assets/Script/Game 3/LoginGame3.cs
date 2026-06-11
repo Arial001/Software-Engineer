@@ -26,16 +26,16 @@ public class LoginGame3 : MonoBehaviour
     {
         game3.SetActive(true);
         Debug.Log("line28 logingame2");
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(2.0f);
         ObjectPlayG3.MAtikanSemuaKamera();
         Debug.Log("line31 logingame2");
         yield return new WaitForSeconds(1.0f);
         ForceObjectSwitcher.SwitchObjectPositions();
+        yield return new WaitForSeconds(5.0f);
         Debug.Log("line34 logingame2");
-        yield return new WaitForSeconds(1.0f);
         ObjectPlayG3.PlayGame2();
+        yield return new WaitForSeconds(2.0f);
         Debug.Log("line37 logingame2");
-        yield return new WaitForSeconds(1.0f);
         ObjectPlayG3.CekposisiKamera();
         Debug.Log("line40 logingame2");
     }

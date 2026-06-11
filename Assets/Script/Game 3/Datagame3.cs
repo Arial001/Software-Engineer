@@ -26,6 +26,10 @@ public class Datagame3 : MonoBehaviour
     public List<MeshRenderer> blockRenderers = new List<MeshRenderer>();
     public int B = 0;
     public GeneratorGame3 GeneratorGame3;
+    [Header("Data Copy Balok")]
+    [Tooltip("List 1D baru untuk menyimpan hasil copy (duplikat) dari allGridBlocks.")]
+    public List<GameObject> copiedAllGridBlocks = new List<GameObject>();
+    
 
     [Header("Grid Dimensions")]
     [Tooltip("Jumlah baris grid.")]
@@ -46,6 +50,7 @@ public class Datagame3 : MonoBehaviour
 
     void Awake()
     {
+        
         InitializeGrid();
     }
     public void EnableAllGridBlocks()
@@ -85,7 +90,7 @@ public class Datagame3 : MonoBehaviour
         }
         Debug.Log($"Semua objek di allGridBlocks sudah diganti materialnya dengan blockRenderers index {B}.");
     }
-    private void InitializeGrid()
+    public void InitializeGrid()
     {
         if (allGridBlocks.Count != gridRows * gridCols)
         {
@@ -106,6 +111,7 @@ public class Datagame3 : MonoBehaviour
                 isOccupied[i, j] = false;
             }
         }
+        DuplicateGridBlocks1D();
     }
 
     /// <summary>
@@ -161,5 +167,103 @@ public class Datagame3 : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void DuplicateGridBlocks1D()
+    {
+        // 1. Bersihkan list baru sebelum diisi agar data tidak menumpuk/dobel 
+        // jika fungsi ini dipanggil lebih dari sekali
+        copiedAllGridBlocks.Clear();
+
+        // 2. Lakukan looping sebanyak jumlah objek di list asli
+        for (int i = 0; i < allGridBlocks.Count; i++)
+        {
+            GameObject originalObject = allGridBlocks[i];
+
+            if (originalObject != null)
+            {
+                /// 3. COPY OBJECT: Duplikat objek dan paksa masuk ke parent (induk) yang sama
+                GameObject duplicatedObject = Instantiate(originalObject, originalObject.transform.parent);
+
+                // (Opsional) Rapikan nama agar mudah dibedakan di Inspector
+                duplicatedObject.name = originalObject.name;
+
+                // [TAMBAHAN PENTING] Matikan objek copy agar tidak bertumpuk/dobel di layar
+                duplicatedObject.SetActive(false);
+
+                // 4. Masukkan objek hasil copy ke list baru
+                copiedAllGridBlocks.Add(duplicatedObject);
+            }
+            else
+            {
+                // 5. PENJAGA INDEX: Jika objek aslinya hilang/null, kita tetap harus 
+                // memasukkan 'null' ke list baru. Ini SANGAT PENTING agar index balok 
+                // selanjutnya tidak bergeser maju.
+                copiedAllGridBlocks.Add(null);
+                Debug.Log($"Objek asli di index {i} kosong/null, slot di list baru dibiarkan kosong.");
+            }
+        }
+
+        Debug.Log($"Selesai meng-copy! Jumlah objek di list asli: {allGridBlocks.Count} | Jumlah di list copy: {copiedAllGridBlocks.Count}");
+    }
+
+    public void RestoreMissingBlocks()
+    {
+        // Cegah error jika list backup belum pernah dibuat
+        if (copiedAllGridBlocks == null || copiedAllGridBlocks.Count == 0)
+        {
+            Debug.LogWarning("List backup (copiedAllGridBlocks) kosong! Lakukan duplikasi terlebih dahulu.");
+            return;
+        }
+
+        int restoredCount = 0;
+
+        // Looping untuk mengecek semua index di list utama
+        for (int i = 0; i < allGridBlocks.Count; i++)
+        {
+            // Jika terdeteksi ada slot yang kosong atau objeknya telah hancur
+            if (allGridBlocks[i] == null)
+            {
+                // Cek keamanan: Pastikan index di list backup tersedia dan tidak kosong
+                if (i < copiedAllGridBlocks.Count && copiedAllGridBlocks[i] != null)
+                {
+                    // 1. PINDAHKAN OBJECT: Ambil referensi langsung dari list backup TANPA Instantiate
+                    GameObject restoredBlock = copiedAllGridBlocks[i];
+
+                    // 2. AKTIFKAN: Karena saat di-copy objek ini dimatikan (SetActive(false)),
+                    // kita harus menghidupkannya kembali agar muncul di scene.
+                    restoredBlock.SetActive(true);
+
+                    // 3. MASUKKAN KE LIST UTAMA: Isi slot kosong tersebut dengan objek backup
+                    allGridBlocks[i] = restoredBlock;
+
+                    restoredCount++;
+                }
+                else
+                {
+                    Debug.LogWarning($"Index {i} di list utama kosong, tapi tidak ada data backup yang sesuai.");
+                }
+            }
+        }
+        Debug.Log($"Proses pengecekan selesai. Berhasil memindahkan {restoredCount} objek dari backup ke list utama.");
+    }
+
+    public void DestroyAllGridBlocks()
+    {
+        // Gunakan 'for' loop agar kita bisa mengakses spesifik nomor index-nya
+        for (int i = 0; i < allGridBlocks.Count; i++)
+        {
+            if (allGridBlocks[i] != null)
+            {
+                // 1. Hancurkan objek secara fisik dari dalam game
+                Destroy(allGridBlocks[i]);
+
+                // 2. Ubah isi slot tersebut menjadi null secara eksplisit
+                // Index-nya tetap ada, tapi isinya menjadi kosong.
+                allGridBlocks[i] = null;
+            }
+        }
+
+        Debug.Log("Semua objek fisik berhasil dihancurkan, tetapi slot index di allGridBlocks tetap dipertahankan.");
     }
 }

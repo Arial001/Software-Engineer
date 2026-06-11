@@ -42,8 +42,8 @@ public class CameraControllerP2 : MonoBehaviour
 
         if (rightStickX != null && rightStickY != null)
         {
-            float mouseX = rightStickX.ReadValue() * mouseSensitivity * Time.deltaTime;
-            float mouseY = rightStickY.ReadValue() * mouseSensitivity * Time.deltaTime;
+            float mouseX = rightStickX.ReadValue() * mouseSensitivity; //* Time.deltaTime;
+            float mouseY = rightStickY.ReadValue() * mouseSensitivity; //* Time.deltaTime;
 
             // Rotasi horizontal (player body)
             playerBody.Rotate(Vector3.down * mouseX);
